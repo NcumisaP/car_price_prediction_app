@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import pandas as pd
 import streamlit as st
-import joblib
+import pickle
 
 # Ensure classes used in the pickle are importable
 import xgboost  # required for unpickling XGBRegressor
@@ -54,15 +54,23 @@ except Exception:
     pass
 
 # -----------------------------
-# Load pipeline (joblib)
+# Load pipeline 
 # -----------------------------
 @st.cache_resource(show_spinner=False)
 def load_pipeline(pkl_path: Path):
+    # First try pickle (as originally saved)
     try:
-        return joblib.load(pkl_path)
-    except Exception as e:
-        st.error(f"❌ Failed to load model: {e}")
-        st.stop()
+        with open(pkl_path, "rb") as f:
+            return pickle.load(f)
+    except Exception as e_pickle:
+        # Optional fallback if someone ever re-saved with joblib
+        try:
+            import joblib  # will only import if present
+            return joblib.load(pkl_path)
+        except Exception as e_joblib:
+            raise RuntimeError(
+                f"Failed to load model with pickle ({e_pickle}) and joblib ({e_joblib})."
+            )
 
 MODEL_PATH = Path(__file__).parent / "car_price_pipeline.pkl"
 pipe = load_pipeline(MODEL_PATH)
