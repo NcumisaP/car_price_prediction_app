@@ -1,4 +1,4 @@
-# app.py — CLEAN version 
+# app.py 
 
 from pathlib import Path
 import sys
@@ -81,7 +81,7 @@ st.markdown(
 )
 
 # -----------------------------
-# Predictor (simple & correct)
+# Predictor 
 # -----------------------------
 def predict_price(df_raw: pd.DataFrame) -> np.ndarray:
     """Model predicts log_price; convert back to price."""
