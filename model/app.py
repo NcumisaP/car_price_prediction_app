@@ -1,4 +1,11 @@
-# app.py — CLEAN version (no patches required)
+# app.py — CLEAN version 
+# Safe import for joblib in cloud environments
+try:
+    import joblib
+except ImportError:
+    import sys, subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "joblib==1.4.2"])
+    import joblib
 
 from pathlib import Path
 import sys
